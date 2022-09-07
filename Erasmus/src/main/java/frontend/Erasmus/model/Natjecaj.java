@@ -1,36 +1,35 @@
 package frontend.Erasmus.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 @Data
-@Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Builder
+@Getter
+@Setter
 public class Natjecaj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId;
-    @NotBlank(message = "Post name cannot be empty")
-    private String natjecajName;
-    @Nullable
-    private String url;
-    @Nullable
-    @Lob
+    private Long id;
+    @NotBlank(message = "Community name is required")
+    private String name;
+    @NotBlank(message = "Description is required")
     private String description;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Mobilnost> mobilnosts;
+    private Instant createDate;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId" , referencedColumnName = "userId")
     private User user;
-    private Instant createdDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private Mobilnost mobilnost;
+    private Date Od;
+    private Date Do;
+    private String Ustanova;
 }

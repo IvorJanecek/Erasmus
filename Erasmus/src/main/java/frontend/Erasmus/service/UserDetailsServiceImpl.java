@@ -1,7 +1,7 @@
 package frontend.Erasmus.service;
 
-import frontend.Erasmus.repository.UserRepository;
 import frontend.Erasmus.model.User;
+import frontend.Erasmus.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import static java.util.Collections.singletonList;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
+    //Učitaj korisnika
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) {

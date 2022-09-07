@@ -1,7 +1,7 @@
 package frontend.Erasmus.exception;
 
 public class MobilnostNotFoundException extends RuntimeException {
-    public MobilnostNotFoundException(String message) {
-        super(message);
+    public MobilnostNotFoundException(String message){
+
     }
 }

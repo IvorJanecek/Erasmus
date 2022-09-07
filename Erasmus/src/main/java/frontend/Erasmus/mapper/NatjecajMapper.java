@@ -1,26 +1,31 @@
 package frontend.Erasmus.mapper;
 
-import frontend.Erasmus.dto.NatjecajResponse;
 import frontend.Erasmus.dto.NatjecajRequest;
 import frontend.Erasmus.model.Mobilnost;
 import frontend.Erasmus.model.Natjecaj;
-import frontend.Erasmus.model.User;
+import org.jetbrains.annotations.NotNull;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface NatjecajMapper {
 
-    @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
-    @Mapping(target = "description", source = "natjecajRequest.description")
-    @Mapping(target = "mobilnost", source = "mobilnost")
-    @Mapping(target = "user", source = "user")
-    public abstract Natjecaj map(NatjecajRequest natjecajRequest, Mobilnost mobilnost, User user);
-
-    @Mapping(target = "id", source = "postId")
-    @Mapping(target = "mobilnostName", source = "mobilnost.name")
-    @Mapping(target = "userName", source = "user.username")
-    public abstract NatjecajResponse mapToDto(Natjecaj natjecaj);
 
 
+//Mapiranje u frontend
+    @Mapping(target = " numberOfMobilnosts", expression = "java(mapMobilnosts(natjecaj.getMobilnosts()))")
+    NatjecajRequest mapNatjecajToDto(Natjecaj natjecaj);
+
+    default Integer mapMobilnosts(@NotNull List<Mobilnost> numberOfMobilnosts) {
+
+        return numberOfMobilnosts.size();
+    }
+
+// mapiranje u natjecaj iz frontenda
+    @InheritInverseConfiguration
+    @Mapping(target = "mobilnosts", ignore = true)
+    Natjecaj mapDtoToNatjecaj(NatjecajRequest natjecaj);
 }

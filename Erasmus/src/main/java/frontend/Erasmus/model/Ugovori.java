@@ -1,11 +1,14 @@
 package frontend.Erasmus.model;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+
 @Entity
-@Table(name = "files")
-public class FileDB {
+@Table(name = "ugovori")
+@AllArgsConstructor
+public class Ugovori {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -14,9 +17,9 @@ public class FileDB {
     private String type;
     @Lob
     private byte[] data;
-    public FileDB() {
+    public Ugovori() {
     }
-    public FileDB(String name, String type, byte[] data) {
+    public Ugovori(String name, String type, byte[] data) {
         this.name = name;
         this.type = type;
         this.data = data;

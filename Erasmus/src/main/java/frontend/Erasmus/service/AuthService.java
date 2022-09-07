@@ -5,13 +5,14 @@ import frontend.Erasmus.dto.LoginRequest;
 import frontend.Erasmus.dto.RefreshTokenRequest;
 import frontend.Erasmus.dto.RegisterRequest;
 import frontend.Erasmus.exception.ErasmusException;
-import frontend.Erasmus.model.NotificationEmail;
-import frontend.Erasmus.model.User;
-import frontend.Erasmus.model.VerificationToken;
+import frontend.Erasmus.model.*;
+import frontend.Erasmus.repository.PasswordResetTokenRepository;
 import frontend.Erasmus.repository.UserRepository;
 import frontend.Erasmus.repository.VerificationTokenRepository;
 import frontend.Erasmus.security.JwtProvider;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,18 +35,22 @@ import java.util.UUID;
 public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
 
+    //registracija
     public void signup(RegisterRequest registerRequest) {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setCreated(Instant.now());
+        user.setRole(Role.valueOf("USER"));
         user.setEnabled(false);
 
         userRepository.save(user);
@@ -56,6 +62,7 @@ public class AuthService {
                 "http://localhost:8080/api/auth/accountVerification/" + token));
     }
 
+    //dohvati trenutnog usera
     @Transactional(readOnly = true)
     public User getCurrentUser() {
         Jwt principal = (Jwt) SecurityContextHolder.
@@ -64,6 +71,7 @@ public class AuthService {
                 .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getSubject()));
     }
 
+    //Omoguci usera nakon potvrdenog mail-a
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ErasmusException("User not found with name - " + username));
@@ -71,6 +79,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    //gemeriraj token
     private String generateVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
@@ -81,11 +90,13 @@ public class AuthService {
         return token;
     }
 
+    //verifikacija accounta
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
         fetchUserAndEnable(verificationToken.orElseThrow(() -> new ErasmusException("Invalid Token")));
     }
 
+    //Logiranje
     public AuthenticationResponse login(LoginRequest loginRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
@@ -99,6 +110,7 @@ public class AuthService {
                 .build();
     }
 
+    //napravi refresh token
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
         String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
@@ -110,8 +122,66 @@ public class AuthService {
                 .build();
     }
 
+    // dali je user logiran
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
+
+
+    //pronadi usera po email-u
+    public User findUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+
+
+    //pasword reset token za usera
+    public void createPasswordResetTokenForUser(User user, String token) {
+        PasswordResetToken passwordResetToken
+                = new PasswordResetToken(user,token);
+        passwordResetTokenRepository.save(passwordResetToken);
+    }
+
+
+    //provjeri reset token
+    public String validatePasswordResetToken(String token) {
+        PasswordResetToken passwordResetToken
+                = passwordResetTokenRepository.findByToken(token);
+
+        if (passwordResetToken == null) {
+            return "invalid";
+        }
+
+        User user = passwordResetToken.getUser();
+        Calendar cal = Calendar.getInstance();
+
+        if ((passwordResetToken.getExpirationTime().getTime()
+                - cal.getTime().getTime()) <= 0) {
+            passwordResetTokenRepository.delete(passwordResetToken);
+            return "expired";
+        }
+
+        return "valid";
+    }
+
+
+    //dohvati usera po reset tokenu
+    public Optional<User> getUserByPasswordResetToken(String token) {
+        return Optional.ofNullable(passwordResetTokenRepository.findByToken(token).getUser());
+    }
+
+
+    //promjena sifre
+    public void changePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+
+
+    //provjera stare sifre
+    public boolean checkIfValidOldPassword(@NotNull User user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 }

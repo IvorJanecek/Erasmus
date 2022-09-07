@@ -2,8 +2,6 @@ package frontend.Erasmus.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Description;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -12,6 +10,8 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 @Configuration
 @EnableWebMvc
 public class ThymeleafConfig {
+
+    //Konfiguracija thymeleaf templejta
 
     @Bean
     public ClassLoaderTemplateResolver templateResolver() {

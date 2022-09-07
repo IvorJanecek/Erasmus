@@ -5,18 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NatjecajRequest {
-    private Long Id;
-    private String name;
+public class MobilnostRequest {
+    private Long mobilnostId;
+    private String mobilnostName;
     private String description;
-    private Integer numberOfMobilnosts;
-    private Date Od;
-    private Date Do;
-    private String Ustanova;
+    private Integer numberOfNatjecajs;
+    private String natjecajName;
+    private String user;
 }

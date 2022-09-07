@@ -19,6 +19,7 @@ public class JwtProvider {
     @Value("${jwt.expiration.time}")
     private Long jwtExpirationInMillis;
 
+    // JWT token generiranje
     public String generateToken(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
         return generateTokenWithUserName(principal.getUsername());

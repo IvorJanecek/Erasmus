@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    //Konfiguracija sigurnosti
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and()
@@ -60,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/api/auth/**")
                         .permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/mobilnost")
+                        .antMatchers(HttpMethod.GET, "/api/subreddit")
                         .permitAll()
                         .antMatchers(HttpMethod.GET, "/api/posts/")
                         .permitAll()
@@ -89,11 +90,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
+    //Enkripcija Sifre
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    //private key i public key dekoder i enkoder
     @Bean
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
