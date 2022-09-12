@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class NatjecajRequest {
-    private Long Id;
+    private Long id;
     private String name;
     private String description;
     private Integer numberOfMobilnosts;

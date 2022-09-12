@@ -44,6 +44,7 @@ public class NatjecajService {
 
 
     //uzmi natjecaj po id
+    @Transactional
     public Object getNatjecaj(Long id) {
         Natjecaj natjecaj = natjecajRepository.findById(id)
                 .orElseThrow(() -> new NatjecajNotFoundException("No subbredits found with this id" + id));

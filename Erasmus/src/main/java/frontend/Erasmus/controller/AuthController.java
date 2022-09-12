@@ -1,9 +1,7 @@
 package frontend.Erasmus.controller;
 
-import frontend.Erasmus.dto.AuthenticationResponse;
-import frontend.Erasmus.dto.LoginRequest;
-import frontend.Erasmus.dto.RefreshTokenRequest;
-import frontend.Erasmus.dto.RegisterRequest;
+import frontend.Erasmus.dto.*;
+import frontend.Erasmus.exception.ErasmusException;
 import frontend.Erasmus.model.PasswordModel;
 import frontend.Erasmus.model.User;
 import frontend.Erasmus.repository.UserRepository;
@@ -17,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -50,6 +47,49 @@ public class AuthController {
     @PostMapping("/login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest){
         return authService.login(loginRequest);
+    }
+
+    //dohvati sve usere
+
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+    //dohvati usera po id-u
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getEmployeeById(@PathVariable(value = "id") Long userId)
+            throws ErasmusException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ErasmusException("User not found for this id :: " + userId));
+        return ResponseEntity.ok().body(user);
+    }
+
+
+    //obrisi usera
+    @DeleteMapping("/users/{id}")
+    public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Long userId)
+            throws ErasmusException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ErasmusException("User not found for this id :: " + userId));
+
+        userRepository.delete(user);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
+    }
+
+    //uredi usera
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateEmployee(@PathVariable(value = "id") Long userId,
+                                                   @Valid @RequestBody User userDetails) throws ErasmusException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ErasmusException("User not found for this id :: " + userId));
+
+        user.setEmail(userDetails.getEmail());
+        user.setUsername(userDetails.getUsername());
+        user.setRole(userDetails.getRole());
+        final User promjenjenUser = userRepository.save(user);
+        return ResponseEntity.ok(promjenjenUser);
     }
 
     @PostMapping("/refresh/token")

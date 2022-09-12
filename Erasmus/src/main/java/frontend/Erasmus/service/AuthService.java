@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -183,5 +184,9 @@ public class AuthService {
     //provjera stare sifre
     public boolean checkIfValidOldPassword(@NotNull User user, String oldPassword) {
         return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    public List<User> listAll(){
+        return userRepository.findAll();
     }
 }
