@@ -16,7 +16,7 @@ public class NatjecajRequest {
     private String name;
     private String description;
     private Integer numberOfMobilnosts;
-    private Date Od;
-    private Date Do;
-    private String Ustanova;
+    private Date datumOd;
+    private Date datumDo;
+    private String ustanova;
 }

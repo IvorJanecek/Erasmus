@@ -3,6 +3,7 @@ package frontend.Erasmus.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -27,6 +28,7 @@ public class User {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @NotBlank(message = "Prezime je potrebno")
     private String prezime;
 
     private String kontakt;
@@ -37,6 +39,7 @@ public class User {
 
 
 
+    @Column(unique=true)
     @Email
     @NotEmpty(message = "Email is required")
     @Pattern(regexp = "[A-Za-z].+[A-Za-z]+[@]+[student].+[mev].+[hr]|[A-Za-z].+[A-Za-z]+[@]+[mev].+[hr]|[A-Za-z]+[@]+[mev].+[hr]")

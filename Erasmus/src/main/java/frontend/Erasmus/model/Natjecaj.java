@@ -29,7 +29,7 @@ public class Natjecaj {
     private Instant createDate;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    private Date Od;
-    private Date Do;
-    private String Ustanova;
+    private Date datumOd;
+    private Date datumDo;
+    private String ustanova;
 }
