@@ -31,5 +31,7 @@ public class Natjecaj {
     private User user;
     private Date datumOd;
     private Date datumDo;
-    private String ustanova;
+    private String vrsta;
+    private String status;
+
 }

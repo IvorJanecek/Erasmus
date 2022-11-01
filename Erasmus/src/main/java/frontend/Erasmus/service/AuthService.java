@@ -7,6 +7,7 @@ import frontend.Erasmus.dto.RegisterRequest;
 import frontend.Erasmus.exception.ErasmusException;
 import frontend.Erasmus.model.*;
 import frontend.Erasmus.repository.PasswordResetTokenRepository;
+import frontend.Erasmus.repository.RoleRepository;
 import frontend.Erasmus.repository.UserRepository;
 import frontend.Erasmus.repository.VerificationTokenRepository;
 import frontend.Erasmus.security.JwtProvider;
@@ -17,6 +18,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +35,8 @@ import java.util.UUID;
 public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
     private final VerificationTokenRepository verificationTokenRepository;
@@ -51,7 +52,7 @@ public class AuthService {
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setCreated(Instant.now());
-        user.setRole(Role.valueOf("USER"));
+        user.setRoles(Arrays.asList(roleRepository.findByRole("USER")));
         user.setEnabled(false);
 
         userRepository.save(user);

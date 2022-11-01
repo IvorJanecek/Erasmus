@@ -33,4 +33,5 @@ public class Mobilnost {
     private Natjecaj natjecaj;
     @Enumerated(EnumType.STRING)
     private Status status;
+
 }

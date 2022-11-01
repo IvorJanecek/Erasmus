@@ -46,6 +46,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest){
+
         return authService.login(loginRequest);
     }
 
@@ -87,7 +88,7 @@ public class AuthController {
 
         user.setEmail(userDetails.getEmail());
         user.setUsername(userDetails.getUsername());
-        user.setRole(userDetails.getRole());
+        user.setRoles(userDetails.getRoles());
         final User promjenjenUser = userRepository.save(user);
         return ResponseEntity.ok(promjenjenUser);
     }

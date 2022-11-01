@@ -1,5 +1,6 @@
 package frontend.Erasmus.dto;
 
+import frontend.Erasmus.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthenticationResponse {
+public class
+AuthenticationResponse {
     private String authenticationToken;
     private String refreshToken;
     private Instant expiresAt;
     private String username;
+    private Role roles;
 }

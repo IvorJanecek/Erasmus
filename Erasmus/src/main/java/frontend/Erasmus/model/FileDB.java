@@ -12,6 +12,7 @@ public class FileDB {
     private String id;
     private String name;
     private String type;
+    private String sluzi;
     @Lob
     private byte[] data;
     public FileDB() {
@@ -20,6 +21,8 @@ public class FileDB {
         this.name = name;
         this.type = type;
         this.data = data;
+
+
     }
     public String getId() {
         return id;

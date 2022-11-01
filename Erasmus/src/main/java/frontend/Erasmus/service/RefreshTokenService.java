@@ -1,5 +1,6 @@
 package frontend.Erasmus.service;
 
+import frontend.Erasmus.exception.ErasmusException;
 import frontend.Erasmus.exception.MobilnostNotFoundException;
 import frontend.Erasmus.model.RefreshToken;
 import frontend.Erasmus.repository.RefreshTokenRepository;
@@ -29,7 +30,7 @@ public class RefreshTokenService {
     //Provjeri refresh token
     void validateRefreshToken(String token){
         refreshTokenRepository.findByToken(token)
-                .orElseThrow(()-> new MobilnostNotFoundException("Invalid refresh Token"));
+                .orElseThrow(()-> new ErasmusException("Invalid refresh Token"));
     }
 
     //obriši refresh token

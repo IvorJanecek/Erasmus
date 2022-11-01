@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import java.time.Instant;
+import java.util.Date;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -40,4 +41,5 @@ public class Prijava {
     private Natjecaj natjecaj;
     private boolean prihvacen;
     private boolean odbijen;
+    private Date rok;
 }
